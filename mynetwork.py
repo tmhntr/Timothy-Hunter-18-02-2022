@@ -1,6 +1,3 @@
-from collections import OrderedDict
-
-
 class mynetwork():
     def __init__(self) -> None:
         self.adj = {}
@@ -29,6 +26,11 @@ class mynetwork():
         self.adj.pop(n)
 
     def add_edge(self, u_node, v_node, **attr) -> None:
+        if u_node not in self.adj:
+            self.add_node(u_node)
+        if v_node not in self.adj:
+            self.add_node(v_node)
+
         self.adj[u_node][v_node].update(attr)
 
         # for undirected graph this line is commented out
