@@ -7,16 +7,38 @@ class mynetwork():
         self.attributes = {}
 
     def add_node(self, new_node, **attr) -> None:
-        pass
+        if (not new_node.__hash__()):
+            raise ValueError(f"{new_node} is not a hashable object.")
+        else:
+            self.adj[new_node] = {}
+            self.attributes[new_node] = {}
+            # print(attr)
+            for k, v in attr.items():
+                self.attributes[new_node][k] = v
 
     def remove_node(self, n) -> None:
-        pass
+        # Remove node from all node adjacencies
+        # TODO: for directed graph this will have to search through all nodes
+        for k in self.adj[n]:
+            self.adj[k].pop(n)
+
+        # remove node from attributes
+        self.attributes.pop(n)
+
+        # remove node from adjacencies
+        self.adj.pop(n)
 
     def add_edge(self, u_node, v_node, **attr) -> None:
-        pass
+        self.adj[u_node][v_node].update(attr)
+
+        # for undirected graph this line is commented out
+        self.adj[v_node][u_node].update(attr)
 
     def remove_edge(self, u_node, v_node) -> None:
-        pass
+        self.adj[u_node].pop(v_node)
+
+        # for undirected graph this line is commented out
+        self.adj[v_node].pop(u_node)
 
     def update(self, edges=None, nodes=None):
         pass
