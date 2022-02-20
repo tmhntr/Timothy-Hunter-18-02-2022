@@ -31,10 +31,16 @@ class mynetwork():
         if v_node not in self.adj:
             self.add_node(v_node)
 
-        self.adj[u_node][v_node].update(attr)
+        if v_node in self.adj[u_node]:
+            self.adj[u_node][v_node].update(attr)
+        else:
+            self.adj[u_node][v_node] = attr
 
         # for undirected graph this line is commented out
-        self.adj[v_node][u_node].update(attr)
+        if u_node in self.adj[v_node]:
+            self.adj[v_node][u_node].update(attr)
+        else:
+            self.adj[v_node][u_node] = attr
 
     def remove_edge(self, u_node, v_node) -> None:
         self.adj[u_node].pop(v_node)
