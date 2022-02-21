@@ -15,15 +15,15 @@ def test_create_mynetwork_object():
 def test_add_node():
     g = mynetwork()
     g.add_node('A')
-    assert 'A' in g.adj
+    assert 'A' in g
 
 
 def test_remove_node():
     g = mynetwork()
     g.add_node('A')
-    assert 'A' in g.adj
+    assert 'A' in g
     g.remove_node('A')
-    assert 'A' not in g.adj
+    assert 'A' not in g
 
 
 def test_add_edge_with_existing_nodes():
@@ -32,21 +32,33 @@ def test_add_edge_with_existing_nodes():
     g.add_node('B')
     g.add_edge('A', 'B')
 
-    print(g.adj['B'])
-    assert 'A' in g.adj['B']
-    assert 'B' in g.adj['A']
+    assert 'A' in g['B']
+    assert 'B' in g['A']
 
 
 def test_add_edge_with_new_nodes():
     g = graph_with_edge('A', 'B')
 
-    assert 'A' in g.adj['B']
-    assert 'B' in g.adj['A']
+    assert 'A' in g['B']
+    assert 'B' in g['A']
 
 
 def test_remove_edge():
     g = graph_with_edge('A', 'B')
     g.remove_edge('A', 'B')
 
-    assert 'A' not in g.adj['B']
-    assert 'B' not in g.adj['A']
+    assert 'A' not in g['B']
+    assert 'B' not in g['A']
+
+
+def test_getitem_dunder_method():
+    g = graph_with_edge('A', 'B')
+
+    assert g['A'] == {'B': {}}
+
+
+def test_contains_dunder_method():
+    g = mynetwork()
+    g.add_node('A')
+
+    assert 'A' in g
