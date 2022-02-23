@@ -62,3 +62,22 @@ def test_contains_dunder_method():
     g.add_node('A')
 
     assert 'A' in g
+
+
+def test_has_node():
+    g = graph_with_edge('A', 'B')
+    assert g.has_node('A')
+    assert not g.has_node('C')
+
+
+def test_has_edge():
+    g = graph_with_edge('A', 'B')
+    g.add_node('C')
+    assert g.has_edge('A', 'B')
+    assert not g.has_edge('A', 'C')
+
+
+def test_update_with_edges():
+    g = graph_with_edge('A', 'B')
+    g.add_node('C')
+    g.update(edges=('B', 'C'))

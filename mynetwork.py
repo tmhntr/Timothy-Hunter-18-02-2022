@@ -1,5 +1,5 @@
 class mynetwork():
-    def __init__(self) -> None:
+    def __init__(self):
         self._adj = {}
         self.attributes = {}
 
@@ -18,10 +18,8 @@ class mynetwork():
         # TODO: for directed graph this will have to search through all nodes
         for k in self._adj[n]:
             self._adj[k].pop(n)
-
         # remove node from attributes
         self.attributes.pop(n)
-
         # remove node from adjacencies
         self._adj.pop(n)
 
@@ -36,13 +34,12 @@ class mynetwork():
             self.add_node(u_node)
         if v_node not in self._adj:
             self.add_node(v_node)
-
+        # add en edge in the explicitly declared direction
         if v_node in self._adj[u_node]:
             self._adj[u_node][v_node].update(attr)
         else:
             self._adj[u_node][v_node] = attr
-
-        # for undirected graph this line is commented out
+        # add en edge in the implicit direction
         if u_node in self._adj[v_node]:
             self._adj[v_node][u_node].update(attr)
         else:
@@ -50,7 +47,6 @@ class mynetwork():
 
     def remove_edge(self, u_node, v_node) -> None:
         self._adj[u_node].pop(v_node)
-
         # for undirected graph this line is commented out
         self._adj[v_node].pop(u_node)
 
@@ -64,10 +60,10 @@ class mynetwork():
         pass
 
     def has_node(self, n):
-        pass
+        return n in self._adj
 
     def has_edge(self, u, v):
-        pass
+        return (u in self._adj[v] and v in self._adj[u])
 
     def get_edge_data(self, u, v, default=None):
         pass
@@ -95,3 +91,8 @@ class mynetwork():
 
     def number_of_edges(self, u=None, v=None) -> int:
         pass
+
+    def __getattribute__(self, __name: str):
+        if __name == 'nodes':
+            return self.attributes
+        return object.__getattribute__(self, __name)
