@@ -99,3 +99,11 @@ def test_add_nodes_from():
     h.add_nodes_from([('A', {'data': 'mydata'}), ('B', {})], alldata='all')
     assert h.nodes['A']['data'] == 'mydata'
     assert h.nodes['A']['alldata'] == 'all' and h.nodes['B']['alldata'] == 'all'
+
+
+def test_iter():
+    g = mynetwork()
+    g.add_nodes_from(['A', 'B'])
+    it = iter(g)
+    assert next(it) == 'A'
+    assert next(it) == 'B'

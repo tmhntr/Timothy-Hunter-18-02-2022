@@ -79,7 +79,7 @@ class mynetwork():
         self.attributes = {}
 
     def __iter__(self):
-        pass
+        return iter(self._adj)
 
     def has_node(self, n):
         return n in self._adj
