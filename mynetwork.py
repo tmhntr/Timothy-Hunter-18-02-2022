@@ -13,6 +13,15 @@ class mynetwork():
             for k, v in attr.items():
                 self.attributes[new_node][k] = v
 
+    def add_nodes_from(self, nodes_for_adding, **attr):
+        if isinstance(nodes_for_adding[0], tuple):
+            for node, node_attr in nodes_for_adding:
+                node_attr.update(attr)
+                self.add_node(node, **node_attr)
+        else:
+            for node in nodes_for_adding:
+                self.add_node(node, **attr)
+
     def remove_node(self, n) -> None:
         # Remove node from all node adjacencies
         # TODO: for directed graph this will have to search through all nodes
@@ -51,10 +60,23 @@ class mynetwork():
         self._adj[v_node].pop(u_node)
 
     def update(self, edges=None, nodes=None):
-        pass
+        if hasattr(edges, 'nodes') and hasattr(edges, 'edges'):
+            for k, v in edges.nodes.items():
+                self.add_node(k, **v)
+            for e in edges.edges:
+                self.add_edge(*e)
+        elif edges:
+            for e in edges:
+                self.add_edge(*e)
+        if nodes:
+            for n in nodes:
+                self.add_node(n)
 
     def clear(self) -> None:
-        pass
+        del self._adj
+        del self.attributes
+        self._adj = {}
+        self.attributes = {}
 
     def __iter__(self):
         pass

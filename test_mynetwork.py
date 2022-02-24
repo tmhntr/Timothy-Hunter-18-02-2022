@@ -80,4 +80,22 @@ def test_has_edge():
 def test_update_with_edges():
     g = graph_with_edge('A', 'B')
     g.add_node('C')
-    g.update(edges=('B', 'C'))
+    g.update(edges=[('B', 'C')])
+    assert g.has_edge('B', 'C')
+
+
+def test_update_with_edges():
+    g = graph_with_edge('A', 'B')
+    g.update(nodes={'C': {'A', 'B'}})
+    assert g.has_node('C')
+
+
+def test_add_nodes_from():
+    g = mynetwork()
+    g.add_nodes_from(['A', 'B'])
+    assert g.has_node('A') and g.has_node('B')
+
+    h = mynetwork()
+    h.add_nodes_from([('A', {'data': 'mydata'}), ('B', {})], alldata='all')
+    assert h.nodes['A']['data'] == 'mydata'
+    assert h.nodes['A']['alldata'] == 'all' and h.nodes['B']['alldata'] == 'all'
