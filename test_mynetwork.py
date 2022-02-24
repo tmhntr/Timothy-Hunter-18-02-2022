@@ -107,3 +107,50 @@ def test_iter():
     it = iter(g)
     assert next(it) == 'A'
     assert next(it) == 'B'
+
+
+def test_get_edges():
+    g = mynetwork()
+    nodes = ['A', 'B', 'C']
+    g.add_nodes_from(nodes)
+    for i in range(len(nodes)):
+        g.add_edge(nodes[i], nodes[i-1], val=i+1)
+
+    # print(g)
+    assert g.edges == {
+        ('A', 'C'): {'val': 1},
+        ('A', 'B'): {'val': 2},
+        ('B', 'C'): {'val': 3}
+    }
+
+
+def test_add_edges_from():
+    g = mynetwork()
+    nodes = ['A', 'B', 'C']
+    edges = []
+    g.add_nodes_from(nodes)
+    for i in range(len(nodes)):
+        edges.append((nodes[i], nodes[i-1], {'val': i+1}))
+    g.add_edges_from(edges)
+    assert g.edges == {
+        ('A', 'C'): {'val': 1},
+        ('A', 'B'): {'val': 2},
+        ('B', 'C'): {'val': 3}
+    }
+
+
+def test_copy_by_nodes_and_edges():
+    g = mynetwork()
+    nodes = [('A', {'name': 'A'}), ('B', {'name': 'B'}), ('C', {'name': 'C'})]
+    edges = []
+    g.add_nodes_from(nodes)
+    for i in range(len(nodes)):
+        edges.append((nodes[i][0], nodes[i-1][0], {'val': i+1}))
+    g.add_edges_from(edges)
+
+    h = mynetwork()
+    h.add_nodes_from(g.nodes)
+    h.add_edges_from(g.edges)
+    # h.update(g)
+    assert h.edges == g.edges
+    assert h.nodes == g.nodes
