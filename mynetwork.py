@@ -172,11 +172,23 @@ class mynetwork():
                 self.add_edge(e[0], e[1], **e[2])
 
     def remove_edge(self, u_node, v_node) -> None:
+        """
+        Remove an edge from the graph.
+
+        u_node: one node of the edge to remove
+        v_node: one node of the edge to remove
+        """
         self._adj[u_node].pop(v_node)
         # for undirected graph this line is commented out
         self._adj[v_node].pop(u_node)
 
     def update(self, edges=None, nodes=None):
+        """
+        Update the graph using another graph object,or a list of edges and/or nodes.
+
+        edges: May be a mynetwork object, or a collection of edges to add. Default value is None
+        nodes: A collection of nodes to add. Default value is None.
+        """
         if hasattr(edges, 'nodes') and hasattr(edges, 'edges'):
             self.add_nodes_from(edges.nodes)
             self.add_edges_from(edges.edges)
@@ -192,6 +204,9 @@ class mynetwork():
                     'Either edges or nodes must be passed a value')
 
     def clear(self) -> None:
+        """
+        Remove all edges and nodes from the graph.
+        """
         del self._adj
         del self.attributes
         self._adj = {}
@@ -250,10 +265,3 @@ class mynetwork():
         if __name == 'edges':
             return EdgeView(self._edges())
         return object.__getattribute__(self, __name)
-
-
-if __name__ == "__main__":
-    G = mynetwork()
-    a = []
-    print()
-    D = dic
