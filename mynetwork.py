@@ -249,6 +249,9 @@ class mynetwork():
         pass
 
     def _edges(self):
+        """
+        Returns a dictionary of edges where the key is (u, v) with u > v, and the value is a dict of the edge attributes.
+        """
         edge_dict = {}
         for u, nbrs in self._adj.items():
             for v, attrs in nbrs.items():
