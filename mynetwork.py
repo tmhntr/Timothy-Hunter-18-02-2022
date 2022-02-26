@@ -1,4 +1,5 @@
 class NodeView:
+
     def __init__(self, nodes):
         self._nodes = nodes
 
@@ -70,11 +71,23 @@ class EdgeView:
 
 
 class mynetwork():
+    """
+    Mimic implementation of an undirected graph data structure from the networkx package. Nodes and edges can be assigned key-value attributes. 
+    """
+
     def __init__(self):
         self._adj = {}
         self.attributes = {}
 
     def add_node(self, new_node, **attr) -> None:
+        """
+        Add a new node to the graph. 
+
+        new_node: any hashable object that will be used to identify the node. If the node already exists, the node will be updated with attributes from attr.
+        attr: any keyword args will be assigned as attributes to the node.
+
+        Raises ValueError if new_node is not hashable.
+        """
         if (not hasattr(new_node, "__hash__")):
             raise ValueError(f"{new_node} is not a hashable object.")
         else:
@@ -85,6 +98,14 @@ class mynetwork():
                 self.attributes[new_node][k] = v
 
     def add_nodes_from(self, nodes_for_adding, **attr):
+        """
+        Add new nodes to the graph. 
+
+        nodes_for_adding: If this is a collection of tuples, nodes will be added as if by -> for k, v in nodes_for_adding, else each value in nodes_for_ading will be added as a node.
+        attr: keyword arguments will be added to each node in nodes_for_adding.
+
+        Raises ValueError if node to add is not hashable.
+        """
         for node in nodes_for_adding:
             if isinstance(node, tuple):
                 node[1].update(attr)
@@ -94,8 +115,12 @@ class mynetwork():
                     self.add_node(node, **attr)
 
     def remove_node(self, n) -> None:
+        """
+        Remove a node from the graph.
+
+        n: node to be removed from the graph. This is the same hashable object that was used to add the node.
+        """
         # Remove node from all node adjacencies
-        # TODO: for directed graph this will have to search through all nodes
         for k in self._adj[n]:
             self._adj[k].pop(n)
         # remove node from attributes
@@ -110,6 +135,13 @@ class mynetwork():
         return n in self._adj
 
     def add_edge(self, u_node, v_node, **attr) -> None:
+        """
+        Add a connection between two nodes. If either of the nodes does not exist, they will be added.
+
+        u_node: A reference to one of the nodes to be connected.
+        v_node: A reference to one of the nodes to be connected.
+        attr: keyword argumentw to be assigned as attributes to the edge.
+        """
         if u_node not in self._adj:
             self.add_node(u_node)
         if v_node not in self._adj:
@@ -126,8 +158,14 @@ class mynetwork():
             self._adj[v_node][u_node] = attr
 
     def add_edges_from(self, ebunch_to_add, **attr):
+        """
+        Add a collection of edges to the graph.
+
+        ebunch_to_add: A collection of edges as tuples to be added to the graph. If the tuple has 2 elements, they will be taken as (u, v). If the tuple has 3 elements, the elements will be taken as u, v, and a dict of attributes
+        attr: keyword arguments to be added to all the edges as attributes. 
+        """
         for e in ebunch_to_add:
-            if len(e) == 2:
+            if len(e) <= 2:
                 self.add_edge(*e, **attr)
             elif len(e) == 3:
                 e[2].update(attr)
@@ -212,3 +250,10 @@ class mynetwork():
         if __name == 'edges':
             return EdgeView(self._edges())
         return object.__getattribute__(self, __name)
+
+
+if __name__ == "__main__":
+    G = mynetwork()
+    a = []
+    print()
+    D = dic
