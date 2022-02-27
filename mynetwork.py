@@ -1,3 +1,6 @@
+import turtle
+
+
 class NodeView:
 
     def __init__(self, nodes):
@@ -28,6 +31,9 @@ class NodeView:
         for n, attr in self._nodes.items():
             nodedata[n] = attr.get(data) if attr.get(data) else default
         return nodedata
+
+    def __repr__(self) -> str:
+        return repr(self._nodes)
 
 
 class EdgeView:
@@ -68,6 +74,9 @@ class EdgeView:
             return iter(self._edges)
         else:
             return iter(self.data(data, default).items())
+
+    def __repr__(self) -> str:
+        return repr(self._edges)
 
 
 class mynetwork():
@@ -268,3 +277,79 @@ class mynetwork():
         if __name == 'edges':
             return EdgeView(self._edges())
         return object.__getattribute__(self, __name)
+
+
+def draw_graph(graph, pos=None):
+    """
+    Plots out the graph. This implementation uses the built-in turtle module of python.
+
+    graph: a mynetwork object to plot out.
+    pos: a dictionary of positions where each node of graph is a key to a tuple with (x, y). If no pos is passed, pos will be taken from the node attributes, with a default of (0, 0)
+    """
+    mindim = 1000000
+    maxdim = 0
+    turtle.mode('world')
+    turtle.speed(0)
+    turtle.pen(pensize=3)
+    nodes = graph.nodes
+    edges = graph.edges
+    if not pos:
+        pos = nodes.data('pos', default=(0, 0))
+    for n, attr in nodes:
+        radius = 50
+        node_pos = pos[n]
+        if node_pos[0] - 2*radius < mindim:
+            mindim = node_pos[0] - 2*radius
+        if node_pos[1] - 2*radius < mindim:
+            mindim = node_pos[1] - 2*radius
+        if node_pos[0] + 2*radius > maxdim:
+            maxdim = node_pos[0] + 2*radius
+        if node_pos[1] + 2*radius > maxdim:
+            maxdim = node_pos[1] + 2*radius
+
+    turtle.setworldcoordinates(mindim, mindim, maxdim, maxdim)
+    for n, attr in nodes:
+        radius = 20
+        fontsize = radius
+        node_pos = pos[n]
+        turtle.penup()
+        turtle.setpos(node_pos[0], node_pos[1]-radius)
+        turtle.pendown()
+        turtle.circle(radius=radius)
+        turtle.penup()
+        turtle.setpos(node_pos[0], node_pos[1] - fontsize/3)
+        turtle.write(n, align='center', font=('Arial', fontsize, 'normal'))
+
+    for e in edges:
+        radius = 20
+        u = e[0]
+        v = e[1]
+        turtle.penup()
+        turtle.setpos(*pos[u])
+        turtle.setheading(turtle.towards(*pos[v]))
+        turtle.forward(radius)
+        turtle.pendown()
+        turtle.forward(turtle.distance(*pos[v])-radius)
+    turtle.hideturtle()
+    turtle.done()
+
+
+if __name__ == "__main__":
+    G = mynetwork()
+    nodes = [
+        ('A', {}),
+        ('B', {'pos': (200, 100)}),
+        ('C', {'pos': (100, 200)}),
+        ('D', {'pos': (200, 200)}),
+        ('F', {'pos': (100, 300)}),
+        ('G', {'pos': (200, 300)})
+    ]
+    G.add_nodes_from(nodes)
+    edges = [
+        ('A', 'B'),
+        ('A', 'D'),
+        ('F', 'G')
+    ]
+    G.add_edges_from(edges)
+
+    draw_graph(G)
