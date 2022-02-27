@@ -296,16 +296,16 @@ def draw_graph(graph, pos=None):
     if not pos:
         pos = nodes.data('pos', default=(0, 0))
     for n, attr in nodes:
-        radius = 50
+        margin = 100
         node_pos = pos[n]
-        if node_pos[0] - 2*radius < mindim:
-            mindim = node_pos[0] - 2*radius
-        if node_pos[1] - 2*radius < mindim:
-            mindim = node_pos[1] - 2*radius
-        if node_pos[0] + 2*radius > maxdim:
-            maxdim = node_pos[0] + 2*radius
-        if node_pos[1] + 2*radius > maxdim:
-            maxdim = node_pos[1] + 2*radius
+        if node_pos[0] - margin < mindim:
+            mindim = node_pos[0] - margin
+        if node_pos[1] - margin < mindim:
+            mindim = node_pos[1] - margin
+        if node_pos[0] + margin > maxdim:
+            maxdim = node_pos[0] + margin
+        if node_pos[1] + margin > maxdim:
+            maxdim = node_pos[1] + margin
 
     turtle.setworldcoordinates(mindim, mindim, maxdim, maxdim)
     for n, attr in nodes:
