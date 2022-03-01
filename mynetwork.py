@@ -255,7 +255,7 @@ class mynetwork():
         return self._adj
 
     def adjacency(self):
-        return self._adj
+        return iter(self._adj.items())
 
     def nbunch_iter(self, nbunch=None):
 
@@ -297,7 +297,7 @@ class mynetwork():
         if __name == 'nodes':
             return NodeView(list(self.attributes.items()))
         if __name == 'edges':
-            return EdgeView(list(self._edges().items()))
+            return EdgeView(list(self._edges()))
         return object.__getattribute__(self, __name)
 
     def __str__(self):
