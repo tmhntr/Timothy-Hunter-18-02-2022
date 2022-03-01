@@ -4,7 +4,7 @@ import turtle
 class NodeView:
 
     def __init__(self, nodes):
-        self._nodes = nodes
+        self._nodes = dict(nodes)
 
     def __getitem__(self, n):
         return self._nodes[n]
@@ -32,13 +32,21 @@ class NodeView:
             nodedata[n] = attr.get(data) if attr.get(data) else default
         return nodedata
 
+    def __str__(self):
+        return str(list(self.items()))
+
     def __repr__(self) -> str:
-        return repr(self._nodes)
+        return f'NodeView({str(self)})'
 
 
 class EdgeView:
     def __init__(self, edges):
-        self._edges = edges
+        self._edges = {}
+        for e in edges:
+            if len(e) == 2:
+                self._edges[e] = {}
+            elif len(e) > 2:
+                self._edges[(e[0], e[1])] = dict(e[2])
 
     def __getitem__(self, n):
         edge = self._edges.get(n)
@@ -46,11 +54,14 @@ class EdgeView:
             edge = self._edges.get((n[1], n[0]))
         return edge
 
-    def __iter__(self):
+    def edgelist(self):
         edgelist = []
         for k, v in self._edges.items():
             edgelist.append((*k, v))
-        return iter(edgelist)
+        return edgelist
+
+    def __iter__(self):
+        return iter(self.edgelist())
 
     def __contains__(self, n):
         return n in self._edges
@@ -75,22 +86,28 @@ class EdgeView:
         else:
             return iter(self.data(data, default).items())
 
+    def __str__(self):
+        return str(self.edgelist())
+
     def __repr__(self) -> str:
-        return repr(self._edges)
+        return f'EdgeView({str(self)})'
 
 
 class mynetwork():
     """
-    Mimic implementation of an undirected graph data structure from the networkx package. Nodes and edges can be assigned key-value attributes. 
+    Mimic implementation of an undirected graph data structure from the networkx package. Nodes and edges can be assigned key-value attributes.
     """
 
-    def __init__(self):
+    def __init__(self, edges=None, nodes=None):
         self._adj = {}
         self.attributes = {}
 
+        if edges:
+            self.update(edges, nodes)
+
     def add_node(self, new_node, **attr) -> None:
         """
-        Add a new node to the graph. 
+        Add a new node to the graph.
 
         new_node: any hashable object that will be used to identify the node. If the node already exists, the node will be updated with attributes from attr.
         attr: any keyword args will be assigned as attributes to the node.
@@ -108,7 +125,7 @@ class mynetwork():
 
     def add_nodes_from(self, nodes_for_adding, **attr):
         """
-        Add new nodes to the graph. 
+        Add new nodes to the graph.
 
         nodes_for_adding: If this is a collection of tuples, nodes will be added as if by -> for k, v in nodes_for_adding, else each value in nodes_for_ading will be added as a node.
         attr: keyword arguments will be added to each node in nodes_for_adding.
@@ -171,7 +188,7 @@ class mynetwork():
         Add a collection of edges to the graph.
 
         ebunch_to_add: A collection of edges as tuples to be added to the graph. If the tuple has 2 elements, they will be taken as (u, v). If the tuple has 3 elements, the elements will be taken as u, v, and a dict of attributes
-        attr: keyword arguments to be added to all the edges as attributes. 
+        attr: keyword arguments to be added to all the edges as attributes.
         """
         for e in ebunch_to_add:
             if len(e) <= 2:
@@ -203,11 +220,9 @@ class mynetwork():
             self.add_edges_from(edges.edges)
         else:
             if edges:
-                for e in edges:
-                    self.add_edge(*e)
+                self.add_edges_from(edges)
             if nodes:
-                for n in nodes:
-                    self.add_node(n)
+                self.add_nodes_from(nodes)
             if not edges and not nodes:
                 raise ValueError(
                     'Either edges or nodes must be passed a value')
@@ -231,52 +246,65 @@ class mynetwork():
         return (u in self._adj[v] and v in self._adj[u])
 
     def get_edge_data(self, u, v, default=None):
-        pass
+        try:
+            return self._adj[u][v]
+        except KeyError:
+            return default
 
     def neighbors(self, n):
-        pass
+        return self._adj
 
     def adjacency(self):
-        pass
+        return self._adj
 
     def nbunch_iter(self, nbunch=None):
+
         pass
 
     def order(self):
-        pass
+        return len(self._adj)
 
     def number_of_nodes(self):
-        pass
+        return len(self._adj)
 
     def __len__(self):
-        pass
+        len(self._adj)
 
     def size(self):
-        pass
+        len(self._adj)
 
     def number_of_edges(self, u=None, v=None) -> int:
-        pass
+        return len(self._edges())
 
     def _edges(self):
         """
         Returns a dictionary of edges where the key is (u, v) with u > v, and the value is a dict of the edge attributes.
         """
-        edge_dict = {}
+        edge_set = set()
+        edges = []
         for u, nbrs in self._adj.items():
             for v, attrs in nbrs.items():
                 key = [u, v]
                 key.sort()
                 key = tuple(key)
-                if key not in edge_dict:
-                    edge_dict[key] = attrs
-        return edge_dict
+                if key not in edge_set:
+                    edge_set.add(tuple(key))
+                    edges.append(tuple([*key, attrs]))
+
+        return edges
 
     def __getattribute__(self, __name: str):
         if __name == 'nodes':
-            return NodeView(self.attributes)
+            return NodeView(list(self.attributes.items()))
         if __name == 'edges':
-            return EdgeView(self._edges())
+            return EdgeView(list(self._edges().items()))
         return object.__getattribute__(self, __name)
+
+    def __str__(self):
+        return f'Undirected graph with {self.number_of_nodes()} nodes and {self.number_of_edges()} edges.'
+
+    def __repr__(self):
+        return f'mynetwork(edges={list(self._edges())}, nodes={list(self.attributes.items())})'
 
 
 def draw_graph(graph, pos=None):
@@ -341,15 +369,22 @@ if __name__ == "__main__":
         ('B', {'pos': (200, 100)}),
         ('C', {'pos': (100, 200)}),
         ('D', {'pos': (200, 200)}),
-        ('F', {'pos': (100, 300)}),
-        ('G', {'pos': (200, 300)})
+        ('E', {'pos': (100, 300)}),
+        ('F', {'pos': (200, 300)})
     ]
     G.add_nodes_from(nodes)
     edges = [
         ('A', 'B'),
         ('A', 'D'),
-        ('F', 'G')
+        ('E', 'F')
     ]
     G.add_edges_from(edges)
 
-    draw_graph(G)
+    # draw_graph(G)
+    # print(repr(G.nodes))
+    # print(repr(G.edges))
+    print(repr(G))
+    H = mynetwork(edges=[('A', 'B', {}), ('A', 'D', {}), ('E', 'F', {})], nodes=[('A', {}), ('B', {'pos': (200, 100)}), ('C', {
+                  'pos': (100, 200)}), ('D', {'pos': (200, 200)}), ('E', {'pos': (100, 300)}), ('F', {'pos': (200, 300)})])
+
+    print(repr(H))
