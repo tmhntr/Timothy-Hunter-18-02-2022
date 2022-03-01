@@ -360,31 +360,3 @@ def draw_graph(graph, pos=None):
         turtle.forward(turtle.distance(*pos[v])-radius)
     turtle.hideturtle()
     turtle.done()
-
-
-if __name__ == "__main__":
-    G = mynetwork()
-    nodes = [
-        ('A', {}),
-        ('B', {'pos': (200, 100)}),
-        ('C', {'pos': (100, 200)}),
-        ('D', {'pos': (200, 200)}),
-        ('E', {'pos': (100, 300)}),
-        ('F', {'pos': (200, 300)})
-    ]
-    G.add_nodes_from(nodes)
-    edges = [
-        ('A', 'B'),
-        ('A', 'D'),
-        ('E', 'F')
-    ]
-    G.add_edges_from(edges)
-
-    # draw_graph(G)
-    # print(repr(G.nodes))
-    # print(repr(G.edges))
-    print(repr(G))
-    H = mynetwork(edges=[('A', 'B', {}), ('A', 'D', {}), ('E', 'F', {})], nodes=[('A', {}), ('B', {'pos': (200, 100)}), ('C', {
-                  'pos': (100, 200)}), ('D', {'pos': (200, 200)}), ('E', {'pos': (100, 300)}), ('F', {'pos': (200, 300)})])
-
-    print(repr(H))
